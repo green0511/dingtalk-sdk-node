@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es5",
+    "lib": ["es6"],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "types": [ 
+      "node"
+    ],
+    "declaration": true
+  },
+  "formatCodeOptions": {
+    "indentSize": 2,
+    "tabSize": 2
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+      "./src/**/*.ts"
+  ]
+}

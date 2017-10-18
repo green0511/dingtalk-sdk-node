@@ -1,9 +1,7 @@
 import { DingTalkConfig, ConfigModule } from './DingTalkConfig'
 import encryptor, { DingTalkEncryptor } from './encryptor/index'
 import isv, { DingTalkIsvApi }  from './isv/index'
-
-import { DingTalkCache, DingTalkLogger, DingTalkModuleOption } from './DingTalkModules'
-import DingTalkModules from './DingTalkModules'
+import { suitStorage } from './storage'
 
 export default class DingTalkSDK {
 
@@ -14,35 +12,26 @@ export default class DingTalkSDK {
     ConfigModule.updateConfig(config);
   }
 
-  constructor(public modules?: DingTalkModuleOption) {
-    if (modules) {
-      modules.cache && DingTalkModules.setCache(modules.cache)
-      modules.logger && DingTalkModules.setLogger(modules.logger)
-    }
-  }
-
-  async updateSuitTicket(suitTicket: string, expireIn: number = 7200) {
-    await DingTalkModules.cache.set('suitTicket', suitTicket, expireIn)
+  async updateSuitTicket(suitTicket: string): Promise<boolean> {
+    suitStorage.suitTicket = suitTicket
     try {
-      const res = await this.isv.getSuitAccessToken()
+      const res = await this.isv.getSuitAccessToken(suitTicket)
       const {suite_access_token: suitAccessToken, expires_in: tokenExpireIn, errmsg} = res
       if (suitAccessToken) {
-        DingTalkModules.logger(`更新 Suit Ticket: `, { suitTicket, suitAccessToken })
-        return DingTalkModules.cache.set('suitAccessToken', suitAccessToken, tokenExpireIn)
-      } else {
-        return Promise.reject(`获取 suit Access Token 错误: ${errmsg}`)
+        suitStorage.suitAccessToken = suitAccessToken
       }
+      return !!suitAccessToken
     } catch(err) {
-      DingTalkModules.logger('获取 suit Access Token 错误:', err)
+      return false
     }
   }
 
   getSuitTicket() {
-    return DingTalkModules.cache.get('suitTicket')
+    return suitStorage.suitTicket
   }
-
+  
   getSuitAccessToken() {
-    return DingTalkModules.cache.get('suitAccessToken')
+    return suitStorage.suitAccessToken
   }
 
 }

@@ -3,6 +3,8 @@ import encryptor, { DingTalkEncryptor } from './encryptor/index'
 import isv, { DingTalkIsvApi }  from './isv/index'
 import { suitStorage } from './storage'
 
+import loggerModule, { Logger } from './logger'
+
 export default class DingTalkSDK {
 
   encryptor: DingTalkEncryptor = encryptor
@@ -32,6 +34,10 @@ export default class DingTalkSDK {
   
   getSuitAccessToken() {
     return suitStorage.suitAccessToken
+  }
+
+  onLogging(logger: Logger) {
+    loggerModule.addLogger(logger)
   }
 
 }

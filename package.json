@@ -1,6 +1,6 @@
 {
   "name": "dingtalk-sdk-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "dingtalk sdk for node server",
   "main": "./dist/index.js",
   "scripts": {
@@ -27,12 +27,14 @@
     "url": "https://github.com/green0511/dingtalk-sdk-node/issues"
   },
   "homepage": "https://github.com/green0511/dingtalk-sdk-node#readme",
-  "dependencies": {
+  "devDependencies": {
     "@types/node": "^8.0.41",
     "@types/request": "^2.0.6",
-    "request": "^2.83.0",
     "shx": "^0.2.2",
     "ts-loader": "^3.0.2",
     "typescript": "^2.5.3"
+  },
+  "dependencies": {
+    "request": "^2.83.0"
   }
 }

@@ -14,6 +14,10 @@ export class DingTalkIsvApi {
   //   DingTalkModules.logger(Object.keys(Config).map(k => `${k}=${Config[k]}`).join(' '))
   // }
   
+  async updateLocalSuitAccessToken() {
+    return;
+  }
+
   // 获取套件 token
   getSuitAccessToken(suitTicket: string) {
     if (!suitTicket) {
@@ -27,36 +31,40 @@ export class DingTalkIsvApi {
   }
 
   // 获取公司的永久授权码 需保存到数据库
-  getPermanentCode(tmpAuthCode: string) {
+  async getPermanentCode(tmpAuthCode: string) {
+    await this.updateLocalSuitAccessToken();
     const suitAccessToken = suitStorage.suitAccessToken
-    return this.http.post(`/service/get_permanent_code?suite_access_token=${suitAccessToken}`, {
+    return await this.http.post(`/service/get_permanent_code?suite_access_token=${suitAccessToken}`, {
       tmp_auth_code: tmpAuthCode
     })
   }
   
   // 企业的授权凭证
-  getCorporationToken(corpId: string, permanentCode: string) {
+  async getCorporationToken(corpId: string, permanentCode: string) {
+    await this.updateLocalSuitAccessToken();
     const suitAccessToken = suitStorage.suitAccessToken
     // const suitAccessToken = await DingTalkModules.cache.get('suitAccessToken')
-    return this.http.post(`/service/get_corp_token?suite_access_token=${suitAccessToken}`, {
+    return await this.http.post(`/service/get_corp_token?suite_access_token=${suitAccessToken}`, {
       auth_corpid: corpId,
       permanent_code: permanentCode
     })
   }
 
   // 获取企业的授权数据详情
-  getAuthInfo(corpId: string) {
+  async getAuthInfo(corpId: string) {
+    await this.updateLocalSuitAccessToken();
     const suitAccessToken = suitStorage.suitAccessToken
-    return this.http.post(`/service/get_auth_info?suite_access_token=${suitAccessToken}`, {
+    return await this.http.post(`/service/get_auth_info?suite_access_token=${suitAccessToken}`, {
       auth_corpid: corpId,
       suite_key: config.suitKey
     })
   }
   
   // 获取为某个公司开通的应用的信息
-  getAgent(corpId: string, permanentCode: string, agentId: string) {
+  async getAgent(corpId: string, permanentCode: string, agentId: string) {
+    await this.updateLocalSuitAccessToken();
     const suitAccessToken = suitStorage.suitAccessToken
-    return this.http.post(`/service/get_agent?suite_access_token=${suitAccessToken}`, {
+    return await this.http.post(`/service/get_agent?suite_access_token=${suitAccessToken}`, {
       suite_key: config.suitKey,
       auth_corpid: corpId,
       permanent_code: permanentCode,
@@ -65,9 +73,10 @@ export class DingTalkIsvApi {
   }
   
   // 为某个公司激活套件。如果ISV未调用此接口，则企业用户无法使用ISV套件
-  activateSuit(corpId: string, permanentCode: string) {
+  async activateSuit(corpId: string, permanentCode: string) {
+    await this.updateLocalSuitAccessToken();
     const suitAccessToken = suitStorage.suitAccessToken
-    return this.http.post(`/service/activate_suite?suite_access_token=${suitAccessToken}`, {
+    return await this.http.post(`/service/activate_suite?suite_access_token=${suitAccessToken}`, {
       suite_key: config.suitKey,
       auth_corpid: corpId,
       permanent_code: permanentCode
@@ -75,17 +84,19 @@ export class DingTalkIsvApi {
   }
   
   // 该API适用于当企业用户授权开通套件不成功,作为补偿机制调用。该API限制调用频次为1/60s。
-  getUnactiveCorp(agentId: string) {
+  async getUnactiveCorp(agentId: string) {
+    await this.updateLocalSuitAccessToken();
     const suitAccessToken = suitStorage.suitAccessToken
-    return this.http.post(`/service/get_unactive_corp?suite_access_token=${suitAccessToken}`, {
+    return await this.http.post(`/service/get_unactive_corp?suite_access_token=${suitAccessToken}`, {
       app_id: agentId
     })
   }
   
   // 该API适用于当企业用户授权开通套件不成功,作为补偿机制调用。该API限制调用频次为1/60s。
-  reauthCorp(agentId: string, corpList: Array<string>) {
+  async reauthCorp(agentId: string, corpList: Array<string>) {
+    await this.updateLocalSuitAccessToken();
     const suitAccessToken = suitStorage.suitAccessToken
-    return this.http.post(`/service/reauth_corp?suite_access_token=${suitAccessToken}`, {
+    return await this.http.post(`/service/reauth_corp?suite_access_token=${suitAccessToken}`, {
       app_id: agentId,
       corpid_list: corpList
     })
@@ -93,9 +104,10 @@ export class DingTalkIsvApi {
   
   // 该API用于ISV为企业独立部署场景，在ISV为企业进行独立部署软件系统时，由于是独立机房环境，每套系统是不同的IP地址
   // ISV可以通过此API为授权套件企业设置IP白名单,设置成功后，套件中的微应用可以调用钉钉开放平台接口服务。
-  setCorpWhitelist(corpId: string, IPWhiteList: Array<string>) {
+  async setCorpWhitelist(corpId: string, IPWhiteList: Array<string>) {
+    await this.updateLocalSuitAccessToken();
     const suitAccessToken = suitStorage.suitAccessToken
-    return this.http.post(`/service/set_corp_ipwhitelist?suite_access_token=${suitAccessToken}`, {
+    return await this.http.post(`/service/set_corp_ipwhitelist?suite_access_token=${suitAccessToken}`, {
       auth_corpid: corpId,
       ip_whitelist: IPWhiteList
     })

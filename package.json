@@ -1,6 +1,6 @@
 {
   "name": "dingtalk-sdk-node",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "dingtalk sdk for node server",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
